@@ -46,39 +46,22 @@ window.mostrarSecao = function(idSecao) {
 }
 
 // ==========================================
-// 4. SISTEMA DE NOTIFICAÇÃO NATIVA NO CELULAR (PUSH & SOM COM SERVICE WORKER)
+// 4. SISTEMA DE ALERTA INTERNO (SIMPLES E DIRETO)
 // ==========================================
-let notificacoesAtivas = false;
+let alertasAtivados = false;
 
-// 1. Registra o Service Worker ao abrir a página
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-    .then(reg => console.log('Service Worker Registrado!', reg))
-    .catch(err => console.error('Erro no Service Worker:', err));
-}
-
+// O botão agora apenas libera o áudio do navegador (regra padrão de navegadores)
 window.ativarNotificacoes = function() {
-    if (!("Notification" in window)) {
-        mostrarNotificacao("Seu navegador não suporta notificações de celular.", "error");
-        return;
-    }
-
-    // AQUI DISPARA O ALERTA DO NAVEGADOR PERGUNTANDO SE PERMITE
-    Notification.requestPermission().then(function (permissao) {
-        if (permissao === "granted") {
-            notificacoesAtivas = true;
-            const btn = document.getElementById('btnNotificacao');
-            btn.innerHTML = "🔔 Alertas Ativados!";
-            btn.style.background = "rgba(16, 185, 129, 0.2)";
-            btn.style.color = "#10b981";
-            btn.style.borderColor = "#10b981";
-            
-            tocarSomNotificacao();
-            mostrarNotificacao("Notificações no celular ativadas com sucesso!", "success");
-        } else {
-            mostrarNotificacao("Permissão negada para enviar alertas.", "error");
-        }
-    });
+    alertasAtivados = true;
+    
+    const btn = document.getElementById('btnNotificacao');
+    btn.innerHTML = "🔔 Alertas Ativados!";
+    btn.style.background = "rgba(16, 185, 129, 0.2)";
+    btn.style.color = "#10b981";
+    btn.style.borderColor = "#10b981";
+    
+    tocarSomNotificacao();
+    mostrarNotificacao("O painel vai apitar quando um novo cliente entrar!", "success");
 }
 
 function tocarSomNotificacao() {
@@ -87,6 +70,7 @@ function tocarSomNotificacao() {
         if (!AudioContext) return;
         const ctx = new AudioContext();
         
+        // Bip
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
         osc1.connect(gain1); gain1.connect(ctx.destination);
@@ -95,6 +79,7 @@ function tocarSomNotificacao() {
         gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
         osc1.start(ctx.currentTime); osc1.stop(ctx.currentTime + 0.1);
 
+        // Bip agudo
         const osc2 = ctx.createOscillator();
         const gain2 = ctx.createGain();
         osc2.connect(gain2); gain2.connect(ctx.destination);
@@ -102,38 +87,21 @@ function tocarSomNotificacao() {
         gain2.gain.setValueAtTime(1, ctx.currentTime + 0.15);
         gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
         osc2.start(ctx.currentTime + 0.15); osc2.stop(ctx.currentTime + 0.3);
-    } catch (e) { console.log("Áudio bloqueado pelo navegador."); }
+    } catch (e) { console.log("Áudio bloqueado."); }
 }
 
+// Quando alguém entra na fila, dispara isso:
 function alertarNovoCliente(nomeCliente) {
-    if (!notificacoesAtivas) return;
-    
-    // 1. Verifica se o navegador bloqueou
-    if (Notification.permission !== "granted") {
-        mostrarNotificacao("O celular está bloqueando as notificações!", "error");
-        return;
-    }
+    if (!alertasAtivados) return;
 
+    // 1. Toca o Bip
     tocarSomNotificacao();
 
-    // 2. Tenta usar o Service Worker para a Barra de Tarefas
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.ready.then(function(registration) {
-            registration.showNotification("Novo Cliente! ✂️", {
-                body: `${nomeCliente} acabou de entrar na fila.`,
-                icon: "img/logo.png",
-                badge: "img/logo.png",
-                vibrate: [200, 100, 200, 100, 200],
-                requireInteraction: true
-            }).catch(erro => {
-                // Se der erro, mostra na tela
-                mostrarNotificacao("Erro ao gerar notificação nativa: " + erro, "error");
-            });
-        });
-    } else {
-        // Fallback básico
-        new Notification("Novo Cliente! ✂️", { body: `${nomeCliente} entrou na fila.` });
-    }
+    // 2. Faz o celular vibrar
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+    // 3. Mostra o balão visual verde DENTRO DO SEU SITE (não falha nunca)
+    mostrarNotificacao(`🚨 NOVO CLIENTE: ${nomeCliente} acabou de entrar na fila!`, "success");
 }
 
 // ==========================================
