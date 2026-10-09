@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Carlos Cortes</title>
+    
+    <!-- Ícone da aba -->
+    <link rel="icon" href="img/logo.png" type="image/png">
+    
+    <!-- Estilo do Painel Admin -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <div class="admin-layout">
+        <!-- Menu Lateral (Sidebar) -->
+        <aside class="sidebar">
+            <h2>Carlos <span>Cortes</span></h2>
+            <nav>
+                <button onclick="mostrarSecao('fila')">📋 Fila do Dia</button>
+                <button onclick="mostrarSecao('historico')">🕰️ Histórico</button>
+                <button onclick="mostrarSecao('servicos')">💈 Serviços</button>
+                <button onclick="mostrarSecao('gerenciarDatas')">📅 Datas e Horários</button>
+                
+                <!-- Botão de Notificações Nativas -->
+                <button id="btnNotificacao" onclick="ativarNotificacoes()" style="background: rgba(6,182,212,0.1); border-color: var(--cyan); color: var(--cyan); margin-top: 20px;">
+                    🔔 Ativar Alertas
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Área de Conteúdo Principal -->
+        <main class="content-area">
+            
+            <!-- Tab: Fila do Dia -->
+            <section id="fila" class="tab-content">
+                <h2>📋 Gerenciar Fila do Dia</h2>
+                
+                <input type="date" id="dataFilaAdmin" class="form-control" style="margin-bottom: 20px;">
+                
+                <!-- Cards de Resumo Financeiro / Status -->
+                <div class="dashboard-cards">
+                    <div class="card">Total Faturado <span id="totalFaturadoDia">R$ 0,00</span></div>
+                    <div class="card">Em Atendimento <span id="qtdCortando">0</span></div>
+                    <div class="card">Aguardando <span id="qtdAguardando">0</span></div>
+                </div>
+
+                <!-- Lista de Clientes na Fila -->
+                <div id="adminFilaList" class="queue-list"></div>
+            </section>
+
+            <!-- Tab: Histórico de Clientes -->
+            <section id="historico" class="tab-content" style="display:none;">
+                <h2>🕰️ Histórico de Clientes</h2>
+                <input type="date" id="dataHistorico" class="form-control" style="margin-bottom: 20px;">
+                
+                <!-- Lista do Histórico -->
+                <div id="historicoList" class="queue-list"></div>
+            </section>
+
+            <!-- Tab: Gerenciar Serviços -->
+            <section id="servicos" class="tab-content" style="display:none;">
+                <h2>💈 Gerenciar Serviços</h2>
+                
+                <div style="background-color: var(--card-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <input type="text" id="novoServicoNome" placeholder="Nome do Serviço (Ex: Degradê Navalhado)" class="form-control">
+                    <input type="number" id="novoServicoValor" placeholder="Valor (Ex: 35.00)" class="form-control">
+                    <button onclick="adicionarServico()" class="btn-success" style="margin-top: 10px;">➕ Adicionar Serviço</button>
+                </div>
+
+                <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: #fff;">Serviços Atuais:</h3>
+                <div id="servicosList" class="queue-list"></div>
+            </section>
+
+            <!-- Tab: Gerenciar Datas e Horários -->
+            <section id="gerenciarDatas" class="tab-content" style="display:none;">
+                <h2>📅 Gerenciar Datas e Horários</h2>
+                
+                <!-- Configuração de Horário de Funcionamento -->
+                <div style="background-color: var(--card-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: #fff;">Horário de Atendimento</h3>
+                    <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 5px; color: #fff; font-weight: bold;">
+                            <input type="checkbox" id="check24h" style="width: 20px; height: 20px;"> 24 Horas
+                        </label>
+                        <input type="time" id="horaAbertura" class="form-control" style="width: auto;">
+                        <span style="color: #fff;">às</span>
+                        <input type="time" id="horaFechamento" class="form-control" style="width: auto;">
+                        <button onclick="salvarHorarios()" class="btn-success" style="padding: 12px 20px;">💾 Salvar Horário</button>
+                    </div>
+                </div>
+
+                <!-- Bloquear Feriados/Folgas -->
+                <div style="background-color: var(--card-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: #fff;">Bloquear Data (Folga/Feriado)</h3>
+                    <input type="date" id="novaDataBloqueada" class="form-control">
+                    <button onclick="bloquearData()" class="btn-danger" style="margin-top: 10px;">🚫 Bloquear Data</button>
+                </div>
+                
+                <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: #fff;">Datas Bloqueadas:</h3>
+                <div id="datasBloqueadasList" class="queue-list"></div>
+            </section>
+
+            <!-- Assinatura do Desenvolvedor -->
+            <div class="dev-footer">
+                Desenvolvido por Vinicius Menezes
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Container das Notificações (Toasts) -->
+    <div id="toast-container"></div>
+
+    <!-- Lógica JavaScript Principal -->
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>

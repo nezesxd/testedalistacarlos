@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carlos Cortes | Fila Online</title>
+    
+    <!-- Ícone da aba -->
+    <link rel="icon" href="img/logo.png" type="image/png">
+    
+    <!-- Estilo Principal -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- TELA DE BEM-VINDO (SPLASH SCREEN) -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="img/logo.png" alt="Logo Carlos Cortes" class="splash-logo">
+            <h1>Carlos Cortes</h1>
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO DO APLICATIVO -->
+    <div class="container">
+        
+        <header class="client-header">
+            <img src="img/logo.png" alt="Logo Carlos Cortes" class="logo-barbearia">
+            <h1>Carlos Cortes</h1>
+            <p>Barbearia Clássica & Moderna</p>
+        </header>
+
+        <section class="form-section">
+            <h2>📅 Entre na Fila</h2>
+            <form id="filaForm">
+                
+                <input type="date" id="dataEscolhida" required>
+                <!-- Aviso de Horário de Funcionamento -->
+                <p id="horarioFuncionamento" class="horario-aviso">🕒 Carregando horários...</p>
+                
+                <input type="text" id="nomeCliente" placeholder="Seu Nome ou Apelido" required>
+                
+                <!-- NOVO CAMPO: WhatsApp -->
+                <input type="tel" id="whatsappCliente" placeholder="WhatsApp (71) 99999-9999" maxlength="15" required style="width: 100%; padding: 14px; margin-bottom: 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease;">
+                
+                <div id="listaServicos" class="services-container">
+                    <p>Carregando serviços...</p>
+                </div>
+                
+                <button type="submit" class="btn-primary">Confirmar Presença</button>
+            </form>
+        </section>
+
+        <section class="queue-section">
+            <h2>📋 Fila de Hoje</h2>
+            <ul id="filaClienteList" class="queue-list">
+                <!-- A fila do dia aparece aqui -->
+            </ul>
+        </section>
+
+        <!-- SUA ASSINATURA -->
+        <div class="dev-footer">
+            Desenvolvido por Vinicius Menezes
+        </div>
+
+    </div>
+
+    <!-- Container das Notificações (Toasts) -->
+    <div id="toast-container"></div>
+
+    <!-- Lógica JavaScript -->
+    <script type="module" src="js/client.js"></script>
+</body>
+</html>
